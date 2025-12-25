@@ -4,10 +4,6 @@ import {Home} from './home/home';
 
 export const routes: Routes = [
   {
-    path: '**',
-    redirectTo: 'home'
-  },
-  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'home',
@@ -19,5 +15,9 @@ export const routes: Routes = [
   {
     path: 'circles',
     component: Circles,
+  },
+  {
+    path: '**',
+    redirectTo: 'home'
   }
 ];
