@@ -1,0 +1,9 @@
+@for (circle of circles(); track circle.id) {
+  <div
+    class="circle"
+    [style.top.px]="circle.y"
+    [style.left.px]="circle.x"
+    [style.border-color]="circle.color"
+    (animationend)="removeCircle(circle.id)"
+  ></div>
+}
