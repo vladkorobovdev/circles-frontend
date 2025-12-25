@@ -21,13 +21,30 @@ export class Circles {
   circles = signal<ICircle[]>([])
   isRandomColorsMode: boolean = false;
   colorNum: number = 0;
+  private lastTouchTime = 0;
+
+  @HostListener('document:touchend', ['$event'])
+  onRootTouchEnd(event: TouchEvent) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - this.lastTouchTime;
+
+    if (tapLength < 200 && tapLength > 0) {
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+    }
+    this.lastTouchTime = currentTime;
+  }
 
   @HostListener('document:keydown', ['$event'])
   onDocumentKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Escape') {
-      this.router.navigateByUrl('/');
-    }
-    if (e.key === 'ArrowUp') {
+    if (e.key === 'Escape') this.goToHome();
+    if (e.key === 'ArrowUp') this.changeColor('up');
+    if (e.key === 'ArrowDown') this.changeColor('down');
+  }
+
+  changeColor(direction: 'up' | 'down') {
+    if (direction === 'up') {
       if (this.isRandomColorsMode) {
         this.isRandomColorsMode = false;
       } else if (this.colorNum >= colors.length - 1) {
@@ -36,8 +53,7 @@ export class Circles {
       } else {
         this.colorNum++;
       }
-    }
-    if (e.key === 'ArrowDown') {
+    } else {
       if (this.isRandomColorsMode) {
         this.isRandomColorsMode = false;
       } else if (this.colorNum <= 0) {
@@ -49,8 +65,16 @@ export class Circles {
     }
   }
 
-  @HostListener('document:mousemove', ['$event'])
-  onMouseMove(e: MouseEvent) {
+  goToHome() {
+    this.router.navigateByUrl('/');
+  }
+
+  @HostListener('document:pointermove', ['$event'])
+  onPointerMove(e: PointerEvent) {
+    if (e.cancelable) {
+      e.preventDefault()
+    }
+
     const circle: ICircle = {
       id: Date.now() + Math.random() * 100,
       x: e.clientX,

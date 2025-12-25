@@ -1,3 +1,15 @@
+<div class="controls" (pointermove)="$event.stopPropagation()">
+  <button (click)="changeColor('up')" class="control-btn">▲</button>
+
+  <div class="status">
+    {{ isRandomColorsMode ? 'Random' : 'Color #' + (colorNum + 1) }}
+  </div>
+
+  <button (click)="changeColor('down')" class="control-btn">▼</button>
+
+  <button (click)="goToHome()" class="control-btn exit-btn">✕</button>
+</div>
+
 @for (circle of circles(); track circle.id) {
   <div
     class="circle"
