@@ -1,0 +1,47 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main] # Убедитесь, что ваша ветка называется main (или замените на master)
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build_site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22 # Используем стабильную LTS версию
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci # Более надежная установка для CI серверов
+
+      - name: Build
+        # ВАЖНО: Замените ВАШЕ_ИМЯ_РЕПОЗИТОРИЯ на имя вашего репо на GitHub
+        run: npx ng build --base-href /ВАШЕ_ИМЯ_РЕПОЗИТОРИЯ/
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Путь из вашего лога сборки + папка browser
+          path: dist/frontend/browser/
+
+  deploy:
+    needs: build_site
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
